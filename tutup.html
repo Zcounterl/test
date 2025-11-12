@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Situs Dalam Perawatan</title>
+    <style>
+        @import url('https_://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+        
+        :root {
+            --bg-color: #121212;
+            --text-color: #E0E0E0;
+            --primary-color: #00aaff;
+            --card-bg: #1E1E1E;
+            --border-color: #333;
+        }
+        
+        body {
+            font-family: 'Roboto', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: linear-gradient(45deg, rgba(0, 170, 255, 0.05), rgba(0, 0, 0, 0) 50%, rgba(0, 170, 255, 0.05));
+            z-index: 1;
+        }
+
+        .container {
+            position: relative;
+            z-index: 2;
+            background-color: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(0, 170, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+
+        .icon {
+            font-size: 60px;
+            color: var(--primary-color);
+            animation: pulse 2s infinite;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            color: #ffffff;
+            margin: 20px 0 10px;
+        }
+
+        p {
+            font-size: 1.1em;
+            font-weight: 300;
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        #countdown {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+
+        .time-box {
+            background-color: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 15px 20px;
+            min-width: 60px;
+        }
+
+        .time-box .value {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .time-box .label {
+            font-size: 0.8em;
+            text-transform: uppercase;
+            color: #aaa;
+        }
+
+        .footer {
+            margin-top: 30px;
+            font-size: 0.9em;
+            color: #888;
+        }
+        
+        .footer a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.8; }
+            50% { transform: scale(1.1); opacity: 1; }
+            100% { transform: scale(1); opacity: 0.8; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="icon">⚠️</div>
+        <h1>Situs Sedang Offline</h1>
+        <p>Mohon maaf atas ketidaknyamanannya. Kami sedang melakukan perawatan terjadwal dan akan segera kembali online.</p>
+        
+        <div id="status-message">
+            <p style="font-weight: 700; color: var(--primary-color);">Situs diperkirakan akan kembali online pada:</p>
+            <h2 id="open-time-display">Memuat...</h2>
+        </div>
+
+        <div id="countdown">
+            <div class="time-box">
+                <div class="value" id="hours">00</div>
+                <div class="label">Jam</div>
+            </div>
+            <div class="time-box">
+                <div class="value" id="minutes">00</div>
+                <div class="label">Menit</div>
+            </div>
+            <div class="time-box">
+                <div class="value" id="seconds">00</div>
+                <div class="label">Detik</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            &copy; 2025 Hak Cipta Dilindungi. <br>
+            Untuk info lebih lanjut, hubungi <a href="mailto:admin@example.com">Admin</a>.
+        </div>
+    </div>
+
+    <script>
+        // --- KONFIGURASI JADWAL ---
+        // Atur jam buka (format 24 jam, Waktu Lokal Anda)
+        const WAKTU_BUKA = 6; // Jam 6 Pagi
+        // ---
+        
+        function updateCountdown() {
+            const now = new Date();
+            const openTime = new Date();
+            
+            openTime.setHours(WAKTU_BUKA, 0, 0, 0); // Set ke jam 6:00:00 pagi ini
+
+            // Jika sekarang sudah lewat jam buka, set target ke jam buka besok
+            if (now.getHours() >= WAKTU_BUKA) {
+                openTime.setDate(openTime.getDate() + 1);
+            }
+
+            // Tampilkan target waktu buka
+            document.getElementById('open-time-display').textContent = openTime.toLocaleString('id-ID', {
+                weekday: 'long', 
+                day: 'numeric', 
+                month: 'long',
+                hour: '2-digit', 
+                minute: '2-digit' 
+            }) + ' WIB';
+
+            // Hitung selisih
+            const totalSeconds = (openTime - now) / 1000;
+            
+            if (totalSeconds < 0) {
+                // Jika sudah waktunya, tampilkan pesan
+                document.getElementById('countdown').innerHTML = "<p>Menyegarkan halaman...</p>";
+                // Coba refresh halaman untuk melihat situs yang sudah live
+                setTimeout(() => location.reload(), 5000); 
+                return;
+            }
+
+            const hours = Math.floor(totalSeconds / 3600) % 24;
+            const minutes = Math.floor(totalSeconds / 60) % 60;
+            const seconds = Math.floor(totalSeconds) % 60;
+
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        }
+
+        updateCountdown();
+        setInterval(updateCountdown, 1000);
+    </script>
+</body>
+</html>
